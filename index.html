@@ -3,91 +3,350 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Captura de Datos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    table { border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #999; padding: 6px 12px; }
-    th { background: #eee; }
-    #seccionTabla { display: none; }
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --warning: #f59e0b;
+      --warning-hover: #d97706;
+      --secondary: #0284c7;
+      --secondary-hover: #0369a1;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 10px;
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 2rem 1rem;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.025em;
+    }
+
+    /* Form Grid Layout */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="tel"] {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    /* Action Buttons */
+    .actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.65rem 1.25rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s, opacity 0.2s, transform 0.1s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    #btnRegistrar { background: var(--primary); color: white; }
+    #btnRegistrar:hover:not(:disabled) { background: var(--primary-hover); }
+
+    #btnConsultar { background: var(--secondary); color: white; }
+    #btnConsultar:hover:not(:disabled) { background: var(--secondary-hover); }
+
+    #btnModificar { background: var(--warning); color: white; }
+    #btnModificar:hover:not(:disabled) { background: var(--warning-hover); }
+
+    #btnEliminar { background: var(--danger); color: white; }
+    #btnEliminar:hover:not(:disabled) { background: var(--danger-hover); }
+
+    #btnCerrar {
+      background: #e2e8f0;
+      color: var(--text);
+    }
+    #btnCerrar:hover { background: #cbd5e1; }
+
+    /* Estado Notificación */
+    #estado {
+      font-weight: 500;
+      color: var(--primary);
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      min-height: 1.25rem;
+    }
+
+    /* Tabla y Buscador */
+    #seccionTabla {
+      display: none;
+    }
+
+    .table-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    #buscador {
+      max-width: 320px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      font-size: 0.875rem;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: #f8fafc;
+    }
+
+    /* Botones dentro de la Tabla */
+    td button {
+      padding: 0.35rem 0.65rem;
+      font-size: 0.75rem;
+      margin-right: 0.4rem;
+    }
+
+    td button:first-child {
+      background: #e0e7ff;
+      color: var(--primary);
+    }
+    td button:first-child:hover { background: #c7d2fe; }
+
+    td button:last-child {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+    td button:last-child:hover { background: #fecaca; }
   </style>
 </head>
 <body>
 
-  <h2>Captura de Datos</h2>
+  <div class="container">
+    <div class="card">
+      <h2>Captura de Datos</h2>
 
-  <form id="formulario">
-    <input type="hidden" id="id">
+      <form id="formulario">
+        <input type="hidden" id="id">
 
-    <label for="nombre">Nombre:</label><br>
-    <input type="text" id="nombre" required><br><br>
+        <div class="form-grid">
+          <div class="field-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" required>
+          </div>
 
-    <label for="edad">Edad:</label><br>
-    <input type="number" id="edad" required min="1" max="120"><br><br>
+          <div class="field-group">
+            <label for="edad">Edad:</label>
+            <input type="number" id="edad" required min="1" max="120">
+          </div>
 
-    <label for="cargo">Cargo:</label><br>
-    <input type="text" id="cargo" required><br><br>
+          <div class="field-group">
+            <label for="cargo">Cargo:</label>
+            <input type="text" id="cargo" required>
+          </div>
 
-    <!-- >>> AGREGAR CAMPO NUEVO (lugar 1 de 6)
-         Copia un bloque label + input y cambia el nombre y el id.
-         Ejemplo:
-         <label for="telefono">Teléfono:</label><br>
-         <input type="text" id="telefono" required><br><br>
-    -->
-    <label for="correo">Correo electrónico:</label><br>
-    <input type="email" id="correo" required><br><br>
-
-    <label for="telefono">Teléfono:</label><br>
-    <input type="tel" id="telefono" required><br><br>
-
-    <label for="departamento">Departamento de trabajo:</label><br>
-    <input type="text" id="departamento" required><br><br>
-
-    <label for="turno">Turno laboral:</label><br>
-    <input type="text" id="turno" required><br><br>
-
-    <label for="experiencia">Años de experiencia:</label><br>
-    <input type="number" id="experiencia" required><br><br>
-
-    <label for="estudios">Nivel de estudios:</label><br>
-    <input type="text" id="estudios" required><br><br>
-
-    <button type="button" id="btnRegistrar">Registrar</button>
-    <button type="button" id="btnConsultar">Consultar</button>
-    <button type="button" id="btnModificar">Modificar</button>
-    <button type="button" id="btnEliminar">Eliminar</button>
-  </form>
-
-  <p id="estado"></p>
-
-  <div id="seccionTabla">
-    <h2>Registros</h2>
-    <button type="button" id="btnCerrar">Cerrar tabla</button>
-    <br><br>
-    <input type="text" id="buscador" placeholder="Buscar por nombre...">
-
-    <table>
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Nombre</th>
-          <th>Edad</th>
-          <th>Cargo</th>
-          <!-- >>> AGREGAR CAMPO NUEVO (lugar 2 de 6)
-               Agrega aquí el encabezado de la columna nueva.
-               Ejemplo: <th>Teléfono</th>
+          <!-- >>> AGREGAR CAMPO NUEVO (lugar 1 de 6)
+               Copia un bloque .field-group completo y cambia el nombre y el id.
+               Ejemplo:
+               <div class="field-group">
+                 <label for="telefono">Teléfono:</label>
+                 <input type="text" id="telefono" required>
+               </div>
           -->
-          <th>Correo electrónico</th>
-          <th>Teléfono</th>
-          <th>Departamento de trabajo</th>
-          <th>Turno laboral</th>
-          <th>Años de experiencia</th>
-          <th>Nivel de estudios</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="tabla"></tbody>
-    </table>
+          <div class="field-group">
+            <label for="correo">Correo electrónico:</label>
+            <input type="email" id="correo" required>
+          </div>
+
+          <div class="field-group">
+            <label for="telefono">Teléfono:</label>
+            <input type="tel" id="telefono" required>
+          </div>
+
+          <div class="field-group">
+            <label for="departamento">Departamento de trabajo:</label>
+            <input type="text" id="departamento" required>
+          </div>
+
+          <div class="field-group">
+            <label for="turno">Turno laboral:</label>
+            <input type="text" id="turno" required>
+          </div>
+
+          <div class="field-group">
+            <label for="experiencia">Años de experiencia:</label>
+            <input type="number" id="experiencia" required>
+          </div>
+
+          <div class="field-group">
+            <label for="estudios">Nivel de estudios:</label>
+            <input type="text" id="estudios" required>
+          </div>
+        </div>
+
+        <div class="actions-bar">
+          <button type="button" id="btnRegistrar">Registrar</button>
+          <button type="button" id="btnConsultar">Consultar</button>
+          <button type="button" id="btnModificar">Modificar</button>
+          <button type="button" id="btnEliminar">Eliminar</button>
+        </div>
+      </form>
+
+      <p id="estado"></p>
+    </div>
+
+    <div id="seccionTabla" class="card">
+      <div class="table-controls">
+        <h2>Registros</h2>
+        <button type="button" id="btnCerrar">Cerrar tabla</button>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <input type="text" id="buscador" placeholder="Buscar por nombre...">
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Nombre</th>
+              <th>Edad</th>
+              <th>Cargo</th>
+              <!-- >>> AGREGAR CAMPO NUEVO (lugar 2 de 6)
+                   Agrega aquí el encabezado de la columna nueva.
+                   Ejemplo: <th>Teléfono</th>
+              -->
+              <th>Correo electrónico</th>
+              <th>Teléfono</th>
+              <th>Departamento de trabajo</th>
+              <th>Turno laboral</th>
+              <th>Años de experiencia</th>
+              <th>Nivel de estudios</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -131,8 +390,8 @@
         // >>> AGREGAR CAMPO NUEVO (lugar 3 de 6)
         // Cada campo termina con coma, EXCEPTO el último.
         // Ejemplo con telefono:
-        //   cargo: document.getElementById("cargo").value,
-        //   telefono: document.getElementById("telefono").value
+        //    cargo: document.getElementById("cargo").value,
+        //    telefono: document.getElementById("telefono").value
         nombre: document.getElementById("nombre").value,
         edad: document.getElementById("edad").value,
         cargo: document.getElementById("cargo").value,
@@ -269,8 +528,8 @@
         // >>> AGREGAR CAMPO NUEVO (lugar 6 de 6)
         // Igual que en REGISTRAR: coma en todos, menos en el último.
         // Ejemplo con telefono:
-        //   cargo: document.getElementById("cargo").value,
-        //   telefono: document.getElementById("telefono").value
+        //    cargo: document.getElementById("cargo").value,
+        //    telefono: document.getElementById("telefono").value
         nombre: document.getElementById("nombre").value,
         edad: document.getElementById("edad").value,
         cargo: document.getElementById("cargo").value,
